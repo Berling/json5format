@@ -19,6 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - run: rustup component add llvm-tools-preview
+      - run: cargo install cargo-binutils
       - name: Run tests
         run: RUSTFLAGS="-C instrument-coverage" cargo test --tests
       - name: Merge profdata
