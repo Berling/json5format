@@ -29,7 +29,7 @@ jobs:
         run: |
           cargo cov -- report \
             $( \
-              for in file \
+              for file in \
                 $( \
                   RUSTFLAGS="-C instrument-coverage" \
                   RUSTDOCFLAGS="-C instrument-coverage -Z unstable-options --persist-doctests target/debug/doctestbins" \
