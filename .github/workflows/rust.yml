@@ -15,3 +15,13 @@ jobs:
       run: cargo build --verbose
     - name: Run tests
       run: cargo test --verbose
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run tests
+        run: RUSTFLAGS="-C instrument-coverage" cargo test --tests
+      - name: Merge profdata
+        run: cargo profdata -- merge -sparse default_*.profdata -o merged.profdata
+      - name: Generate report
+        run: cargo cov -- report --use-color --ignore-filename-regex='/.cargo/registry' --instr-profile=merged.profdata
