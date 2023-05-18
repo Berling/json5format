@@ -23,8 +23,7 @@ jobs:
       - run: cargo install cargo-binutils
       - name: Run tests
         run: RUSTFLAGS="-C instrument-coverage" cargo test --tests
-      - run: ls -ahl
       - name: Merge profdata
-        run: cargo profdata -- merge -sparse default_*.profdata -o merged.profdata
+        run: cargo profdata -- merge -sparse default_*.profraw -o merged.profdata
       - name: Generate report
         run: cargo cov -- report --use-color --ignore-filename-regex='/.cargo/registry' --instr-profile=merged.profdata
