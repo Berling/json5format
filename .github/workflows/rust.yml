@@ -26,4 +26,19 @@ jobs:
       - name: Merge profdata
         run: cargo profdata -- merge -sparse default_*.profraw -o merged.profdata
       - name: Generate report
-        run: cargo cov -- report --use-color --ignore-filename-regex='/.cargo/registry' --instr-profile=merged.profdata
+        run: cargo cov -- report \
+                $( \
+                  for file in \
+                    $( \
+                      RUSTFLAGS="-C instrument-coverage" \
+                      RUSTDOCFLAGS="-C instrument-coverage -Z unstable-options --persist-doctests target/debug/doctestbins" \
+                        cargo test --no-run --message-format=json \
+                          | jq -r "select(.profile.test == true) | .filenames[]" \
+                          | grep -v dSYM - \
+                    ) \
+                    target/debug/doctestbins/*/rust_out; \
+                  do \
+                    [[ -x $file ]] && printf "%s %s " -object $file; \
+                  done \
+                ) \
+             --use-color --ignore-filename-regex='/.cargo/registry' --ignore-filename-regex='/rustc' --instr-profile=merged.profdata --summary-only
