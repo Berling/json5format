@@ -42,4 +42,4 @@ jobs:
                 [[ -x $file ]] && printf "%s %s " -object $file; \
               done \
             ) \
-          --instr-profile=json5format.profdata --summary-only
+          --instr-profile=merged.profdata --summary-only
