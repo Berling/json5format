@@ -43,6 +43,7 @@ jobs:
               done \
             ) \
           --instr-profile=merged.profdata --ignore-filename-regex=/.cargo/registry --ignore-filename-regex=/rust > coverage.txt
+      - run: cat coverage.txt
       - name: Upload report
         uses: codecov/codecov-action@v3
         with:
