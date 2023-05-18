@@ -27,7 +27,7 @@ jobs:
         run: cargo profdata -- merge -sparse default_*.profraw -o merged.profdata
       - name: Generate report
         run: |
-          cargo cov -- show \
+          cargo cov -- export \
             $( \
               for file in \
                 $( \
