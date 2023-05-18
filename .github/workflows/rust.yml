@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@master
     - name: Build
       run: cargo build --verbose
     - name: Run tests
@@ -18,7 +18,7 @@ jobs:
   coverage:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@master
       - run: rustup component add llvm-tools-preview
       - run: cargo install cargo-binutils
       - name: Run tests
@@ -27,7 +27,7 @@ jobs:
         run: cargo profdata -- merge -sparse default_*.profraw -o merged.profdata
       - name: Generate report
         run: |
-          cargo cov -- report \
+          cargo cov -- show \
             $( \
               for file in \
                 $( \
@@ -42,4 +42,11 @@ jobs:
                 [[ -x $file ]] && printf "%s %s " -object $file; \
               done \
             ) \
-          --instr-profile=merged.profdata --summary-only --ignore-filename-regex=/.cargo/registry --ignore-filename-regex=/rust
+          --instr-profile=merged.profdata --ignore-filename-regex=/.cargo/registry --ignore-filename-regex=/rust > report.txt
+      - name: Upload report
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./report.txt
+          fail_ci_if_error: true
+          verbose: true
